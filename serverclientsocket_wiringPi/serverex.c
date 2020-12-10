@@ -7,8 +7,21 @@
 #include <string>
 #include <stdio.h>
 #include <unistd.h>
+#include <wiringPi.h>
 
 using namespace std;
+
+int blinkbeep(int pinno,int blinktime)
+{
+        wiringPiSetup();                        // Setup the library
+        pinMode(pinno, OUTPUT);         // Configure GPIO0 as an output
+        digitalWrite(pinno, LOW);
+        digitalWrite(pinno, HIGH);
+        delay(blinktime);
+        digitalWrite(pinno, LOW);
+        return 0;
+}
+
 
 int main()
 {
@@ -43,7 +56,7 @@ int main()
 		perror("recv");
 
 		cout << "rec = "<<receive<<endl;
-		cout<<UE2.imsi<<"\n";
+		if (UE2.imsi==16) blinkbeep(0,50);
 	}
         close(sock);
         perror("close");
