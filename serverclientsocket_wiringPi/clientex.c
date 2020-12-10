@@ -13,15 +13,14 @@ int main(int argc, char *argv[])
 {
         struct UE
         {
-                int Net;
-                int imsi;
+                int mess1;
+                int mess2;
         } ;
         UE UE1;
-        UE1.Net = atoi(argv[3]);
-        UE1.imsi = atoi(argv[4]); 
-        int sock, receive;
+        UE1.mess1 = atoi(argv[3]);
+        UE1.mess2 = atoi(argv[4]); 
+        int sock;
         struct sockaddr_in server;
-        char mesg[200];
         sock = socket(PF_INET, SOCK_STREAM, 0);
         perror("Socket:");
 
@@ -33,9 +32,8 @@ int main(int argc, char *argv[])
         connect(sock, (struct sockaddr*)&server, sizeof(server));
         perror("Connect:");
 
-        int count = 0;
         send(sock, &UE1, sizeof(UE1), 0);
         perror("send");
-        cout<<"Sent "<<UE1.imsi<<" and "<<UE1.Net<<" to Server \n";
+        cout<<"Sent "<<UE1.mess1<<" and "<<UE1.mess2<<" to Server \n";
         close(sock);
 }

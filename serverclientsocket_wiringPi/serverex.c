@@ -27,8 +27,8 @@ int main()
 {
         struct UE
         {
-                int Net;
-                int imsi;
+                int mess1;
+                int mess2;
         } ;
         UE UE2;
 
@@ -54,9 +54,8 @@ int main()
 		perror("accept");
 		receive = recv(cli, ( void*)&UE2, sizeof(UE2), 0);
 		perror("recv");
-
 		cout << "rec = "<<receive<<endl;
-		if (UE2.imsi==16) blinkbeep(0,50);
+		blinkbeep(UE2.mess1,UE2.mess2);
 	}
         close(sock);
         perror("close");
