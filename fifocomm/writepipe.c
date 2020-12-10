@@ -1,38 +1,30 @@
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
-#include <time.h>
-#include <stdlib.h>
 #include <stdio.h>
 
-#define MaxLoops         12000   /* outer loop */
-#define ChunkSize           16   /* how many written at a time */
-#define IntsPerChunk         4   /* four 4-byte ints per chunk */
-#define MaxZs              250   /* max microseconds to sleep */
+int main()
+{
+    int fd;
+    char * myfifo = "/tmp/myfifo";
 
-int main() {
-  const char* pipeName = "/tmp/fifoChannel";
-  mkfifo(pipeName, 0666);                      /* read/write for user/group/others */
-  int fd = open(pipeName, O_CREAT | O_WRONLY); /* open as write-only */
-  if (fd < 0) return -1;                       /* can't go on */
+    /* create the FIFO (named pipe) */
+    mkfifo(myfifo, 0666);
 
-  int i;
-  for (i = 0; i < MaxLoops; i++) {          /* write MaxWrites times */
-    int j;
-    for (j = 0; j < ChunkSize; j++) {       /* each time, write ChunkSize bytes */
-      int k;
-      int chunk[IntsPerChunk];
-      for (k = 0; k < IntsPerChunk; k++)
-        chunk[k] = rand();
-      write(fd, chunk, sizeof(chunk));
+    /* write "Hi" to the FIFO */
+    int buf=0;
+    while(1){
+        fd = open(myfifo, O_WRONLY|O_NONBLOCK);
+        write(fd, &buf, sizeof(buf));
+        printf("Send = %d\n",buf);
+        usleep(1000000);
+        buf++;
     }
-    usleep((rand() % MaxZs) + 1);           /* pause a bit for realism */
-  }
+    close(fd);
 
-  close(fd);           /* close pipe: generates an end-of-stream marker */
-  unlink(pipeName);    /* unlink from the implementing file */
-  printf("%i ints sent to the pipe.\n", MaxLoops * ChunkSize * IntsPerChunk);
+    /* remove the FIFO */
+    unlink(myfifo);
 
-  return 0;
+    return 0;
 }
